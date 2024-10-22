@@ -1,0 +1,32 @@
+# Create a GitHub action to email a report from a file at 6 a.m. daily
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy app
+        run: |
+          echo "Deploying the app..."
+          echo "Deployed!" > deployment-report.txt
+
+      - name: Email report
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL }}
+          password: ${{ secrets.PASSWORD }}
+          subject: "Deployment report"
+          body: "Find attached the deployment report."
+          to: ${{ secrets.EMAIL }}
+          attachments: deployment-report.txt
